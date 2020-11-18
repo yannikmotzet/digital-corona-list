@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/my_nav"
+    app:startDestination="@id/Home_Fragment">
+
+    <fragment
+        android:id="@+id/Profile_Fragment"
+        android:name="com.example.testbeacon.user_profile"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_user_profile" />
+    <fragment
+        android:id="@+id/Home_Fragment"
+        android:name="com.example.testbeacon.Home"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" />
+    <fragment
+        android:id="@+id/Settings_Fragment"
+        android:name="com.example.testbeacon.settings"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings" />
+</navigation>

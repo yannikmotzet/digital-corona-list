@@ -1,8 +1,12 @@
 package com.example.testbeacon;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.NavigationUI;
 
 import android.Manifest;
 import android.app.Activity;
@@ -13,8 +17,11 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
@@ -37,8 +44,15 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        verifyBluetooth();
 
+        // layout
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_view);
+        NavController navController = Navigation.findNavController(this,  R.id.fragment);
+        NavigationUI.setupWithNavController(bottomNavigationView, navController);
+
+
+        // bluetooth communication
+        verifyBluetooth();
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
             ActivityCompat.requestPermissions(MainActivity.this, new String[] { Manifest.permission.ACCESS_FINE_LOCATION }, PERMISSION_REQUEST_FINE_LOCATION);
         }
@@ -46,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
             Toast.makeText(MainActivity.this, "Permission already granted", Toast.LENGTH_SHORT).show();
         }
     }
+
 
     public void onResume(){
         super.onResume();

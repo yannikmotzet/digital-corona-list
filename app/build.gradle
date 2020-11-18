@@ -3,8 +3,8 @@ plugins {
 }
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.3"
+    compileSdkVersion 30
+    buildToolsVersion '30.0.2'
 
     defaultConfig {
         applicationId "com.example.testbeacon"
@@ -29,6 +29,7 @@ android {
 }
 
 dependencies {
+    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
     implementation 'org.altbeacon:android-beacon-library:2+'
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.google.android.material:material:1.1.0'

@@ -13,7 +13,7 @@ PASSPHRASE="12345!"
 MAX_STORAGE_DAYS = 21
 DATABASE_LIST_PATH = "storage.csv"
 DATABASE_ROOMS_PATH = './rooms.json'
-DATABASE_EVENTS_PATH = './rooms.json'
+DATABASE_EVENTS_PATH = './events.json'
 
 
 app = flask.Flask(__name__)
@@ -22,7 +22,6 @@ app = flask.Flask(__name__)
 # delete old data
 today = date.today()
 csv_df = pd.read_csv(DATABASE_LIST_PATH, parse_dates=False)
-print(csv_df)
 for index, row in csv_df.iterrows():
     difference_days = (today - datetime.strptime(row['date'], "%Y-%m-%d").date()).days
     if difference_days >= MAX_STORAGE_DAYS:
@@ -39,7 +38,7 @@ with open(DATABASE_ROOMS_PATH) as json_file_rooms:
 with open(DATABASE_EVENTS_PATH) as json_file_events:
     events_json = json.load(json_file_events)
 events_df = pd.read_json(DATABASE_EVENTS_PATH, convert_dates=False)
-print(type(events_df))
+print(events_df)
 
 
 # html home page
@@ -88,9 +87,25 @@ def store_user_data():
                 data = room + "," + date + "," + event_start_time +  "," +  event_end_time +  "," +  event_name +  "," + time + "," + given_name + "," + sur_name + "," + phone + "," + e_mail +'\n'
                 with open(DATABASE_LIST_PATH,'a') as fd:
                     fd.write(data)
-                return room + ',' + event_name
+                return jsonify([{'room': room, 'event_name': event_name}])
 
     return 'ERROR: no lecture found'
+
+# http get for entry
+@app.route('/participants', methods=['GET'])
+def return_participants():
+    client_data_json = request.get_json()
+    room = client_data_json['room']
+    date = client_data_json['date']
+    start_time = client_data_json['start_time']
+    # check csv
+    csv_df = pd.read_csv(DATABASE_LIST_PATH, parse_dates=False)
+    print(csv_df)
+    for index, row in csv_df.iterrows():
+        if (row['room'] == room) and (row['date'] == date) and (row['start_time'] == start_time):
+            continue
+        else: csv_df.drop(index, inplace=True)
+    return csv_df.to_json()
 
 
 # run server

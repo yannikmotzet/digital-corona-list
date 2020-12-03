@@ -15,10 +15,16 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.RemoteException;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -32,18 +38,28 @@ import org.altbeacon.beacon.MonitorNotifier;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
 
 public class MainActivity extends AppCompatActivity implements BeaconConsumer, RangeNotifier {
     protected static final String TAG = "MainActivity";
     private static final int PERMISSION_REQUEST_FINE_LOCATION = 1;
     private BeaconManager mBeaconManager;
+    Region region;
+    TreeSet<String> idList = new TreeSet<String>();
+    Map<String, String> rooms = new HashMap<String, String>();
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        rooms.put("0x00112233445566778898", "HTWG-F123");
 
         // layout
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_view);
@@ -64,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
 
     public void onResume(){
         super.onResume();
+
         mBeaconManager = BeaconManager.getInstanceForApplication(this.getApplicationContext());
         // Detect the main Eddystone-UID frame:
         mBeaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(BeaconParser.EDDYSTONE_UID_LAYOUT));
@@ -144,6 +161,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
 
     @Override
     public void onBeaconServiceConnect() {
+        /*
         Region region = new Region("all-beacons-region", null, null, null);
         try {
             mBeaconManager.startRangingBeaconsInRegion(region);
@@ -151,6 +169,8 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
             e.printStackTrace();
         }
         mBeaconManager.addRangeNotifier(this);
+
+         */
     }
 
     @Override
@@ -164,8 +184,92 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
                         " and instance id: "+instanceId+
                         " approximately "+beacon.getDistance()+" meters away.");
 
+
+                if(!idList.contains(namespaceId.toString())) {
+
+                    TextView idText = new TextView(this);
+                    TextView distanceText = new TextView(this);
+                    String roomname = rooms.get(namespaceId.toString());
+                    Double distance = round(beacon.getDistance(),2);
+                    idText.setText("Raum: " + roomname);
+                    distanceText.setText("Entfernung: " + distance + "m");
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    params.gravity = Gravity.CENTER;
+                    distanceText.setLayoutParams(params);
+                    idText.setLayoutParams(params);
+                    Button postButton = new Button(this);
+                    View.OnClickListener listener = new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            sendData(namespaceId.toString());
+                        }
+                    };
+                    postButton.setOnClickListener(listener);
+                    postButton.setLayoutParams(params);
+                    postButton.setText("senden");
+                    LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
+                    linearLayout.addView(idText);
+                    linearLayout.addView(distanceText);
+                    linearLayout.addView(postButton);
+                    idList.add(namespaceId.toString());
+
+                }
             }
+
         }
+    }
+
+    public void scanClicked (View v){
+
+        idList.clear();
+        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
+        linearLayout.removeAllViews();
+        region = new Region("all-beacons-region", null, null, null);
+        try {
+            mBeaconManager.startRangingBeaconsInRegion(region);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        mBeaconManager.addRangeNotifier(this);
+        //mBeaconManager.bind(this);
+        final Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    mBeaconManager.stopRangingBeaconsInRegion(region);
+                }
+                catch (RemoteException e){
+                    e.printStackTrace();
+                }
+
+            }
+        }, 10000);
+
+
+
+    }
+
+    public void stopScan (View v){
+        try{
+            mBeaconManager.stopRangingBeaconsInRegion(region);
+        }
+        catch (RemoteException e){
+            e.printStackTrace();
+        }
+    }
+
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        long factor = (long) Math.pow(10, places);
+        value = value * factor;
+        long tmp = Math.round(value);
+        return (double) tmp / factor;
+    }
+
+    public void sendData (String id){
+        Log.d(TAG, id);
     }
 
 }

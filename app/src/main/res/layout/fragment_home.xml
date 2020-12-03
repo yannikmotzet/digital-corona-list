@@ -24,10 +24,4 @@
         android:onClick="stopScan"
         android:text="Stop Scan" />
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="5dp"
-        android:orientation="vertical"></LinearLayout>
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

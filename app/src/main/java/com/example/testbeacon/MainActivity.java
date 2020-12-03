@@ -15,6 +15,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.RemoteException;
 import android.util.Log;
 import android.view.Gravity;
@@ -229,7 +231,20 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
             e.printStackTrace();
         }
         mBeaconManager.addRangeNotifier(this);
-        mBeaconManager.bind(this);
+        //mBeaconManager.bind(this);
+        final Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    mBeaconManager.stopRangingBeaconsInRegion(region);
+                }
+                catch (RemoteException e){
+                    e.printStackTrace();
+                }
+
+            }
+        }, 10000);
 
 
 

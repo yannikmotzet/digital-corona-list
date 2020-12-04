@@ -207,7 +207,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
                     postButton.setOnClickListener(listener);
                     postButton.setLayoutParams(params);
                     postButton.setText("senden");
-                    LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
+                    LinearLayout linearLayout = (LinearLayout) findViewById(R.id.fragment_home);
                     linearLayout.addView(idText);
                     linearLayout.addView(distanceText);
                     linearLayout.addView(postButton);
@@ -222,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
     public void scanClicked (View v){
 
         idList.clear();
-        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
+        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.fragment_home);
         linearLayout.removeAllViews();
         region = new Region("all-beacons-region", null, null, null);
         try {

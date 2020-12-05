@@ -73,7 +73,7 @@ def store_user_data():
     given_name = client_data_json['given_name']
     sur_name = client_data_json['sur_name']
     phone = client_data_json['phone']
-    e_mail = client_data_json['e-mail']
+    e_mail = client_data_json['e_mail']
 
     # find corresponding lecture
     for __, row in events_df.iterrows():

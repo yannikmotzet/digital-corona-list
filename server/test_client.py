@@ -9,7 +9,7 @@ data_store_1 = {'room': 'htwg-f123',
      'given_name': 'Max',
      'sur_name': 'Mustermann',
      'phone': '',
-     'e-mail': 'max.mustermann@mustermail.com'}
+     'e_mail': 'max.mustermann@mustermail.com'}
 
 data_store_2 = {'room': 'htwg-f123',
      'date': '2020-04-01',
@@ -17,7 +17,7 @@ data_store_2 = {'room': 'htwg-f123',
      'given_name': 'Philip',
      'sur_name': 'Mustermann',
      'phone': '',
-     'e-mail': 'philip.mustermann@mustermail.com'}
+     'e_mail': 'philip.mustermann@mustermail.com'}
 
 data_participants_request = {'room': 'htwg-f123',
      'date': '2020-04-01',

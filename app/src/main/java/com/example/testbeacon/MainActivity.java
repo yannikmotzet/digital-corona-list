@@ -11,8 +11,10 @@ import androidx.navigation.ui.NavigationUI;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -272,5 +274,42 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         Log.d(TAG, id);
     }
 
+    // saves User Data in shared Preferences
+    public void saveUserData(View v){
+        SharedPreferences sp;
+        sp = getSharedPreferences("UserData", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+
+        com.google.android.material.textfield.TextInputEditText first_name = (com.google.android.material.textfield.TextInputEditText) findViewById(R.id.first_name_profile);
+        com.google.android.material.textfield.TextInputEditText sur_name = (com.google.android.material.textfield.TextInputEditText) findViewById(R.id.sur_name_profile);
+        com.google.android.material.textfield.TextInputEditText phone = (com.google.android.material.textfield.TextInputEditText) findViewById(R.id.phone_profile);
+        com.google.android.material.textfield.TextInputEditText e_mail = (com.google.android.material.textfield.TextInputEditText) findViewById(R.id.email_profile);
+
+        editor.putString("first_name", first_name.getText().toString());
+        editor.putString("sur_name", sur_name.getText().toString());
+        editor.putString("phone", phone.getText().toString());
+        editor.putString("e_mail", e_mail.getText().toString());
+        editor.apply();
+        Toast.makeText(this, "Information saved.", Toast.LENGTH_LONG).show();
+    }
+
+    // retrieves User Data from shared Preferences
+    public void loadUserData(){
+        SharedPreferences sp;
+        sp = getSharedPreferences("UserData", MODE_PRIVATE);
+
+        com.google.android.material.textfield.TextInputEditText first_name = (com.google.android.material.textfield.TextInputEditText) findViewById(R.id.first_name_profile);
+        com.google.android.material.textfield.TextInputEditText sur_name = (com.google.android.material.textfield.TextInputEditText) findViewById(R.id.sur_name_profile);
+        com.google.android.material.textfield.TextInputEditText phone = (com.google.android.material.textfield.TextInputEditText) findViewById(R.id.phone_profile);
+        com.google.android.material.textfield.TextInputEditText e_mail = (com.google.android.material.textfield.TextInputEditText) findViewById(R.id.email_profile);
+
+        first_name.setText(sp.getString("first_name", ""));
+        sur_name.setText(sp.getString("sur_name", ""));
+        phone.setText(sp.getString("phone", ""));
+        e_mail.setText(sp.getString("e_mail", ""));
+    }
+
 }
+
+
 

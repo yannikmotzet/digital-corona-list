@@ -47,6 +47,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class MainActivity extends AppCompatActivity implements BeaconConsumer, RangeNotifier {
     protected static final String TAG = "MainActivity";
     private static final int PERMISSION_REQUEST_FINE_LOCATION = 1;
@@ -271,13 +277,39 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
     }
 
     public void sendData (String id){
+        SharedPreferences sp = getSharedPreferences("UserData", MODE_PRIVATE);
+        SimpleDateFormat date_formatter = new SimpleDateFormat("yyyy-MM.dd HH:mm:ss");
+        SimpleDateFormat time_formatter = new SimpleDateFormat("HH:mm");
+        Date now = new Date();
         Log.d(TAG, id);
+        // data
+        String room = id;
+        String date = date_formatter.format(now);
+        String time = time_formatter.format(now);
+        String first_name = sp.getString("first_name", "");
+        String sur_name = sp.getString("sur_name", "");
+        String phone = sp.getString("phone", "");
+        String e_mail = sp.getString("e-mail", "");
+        //create json object
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("room", room);
+            obj.put("date", date);
+            obj.put("time", time);
+            obj.put("given_name", first_name);
+            obj.put("sur_name", sur_name);
+            obj.put("phone", phone);
+            obj.put("e_mail", e_mail);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        //send http post with json
+        //check answer and make toast
     }
 
     // saves User Data in shared Preferences
     public void saveUserData(View v){
-        SharedPreferences sp;
-        sp = getSharedPreferences("UserData", MODE_PRIVATE);
+        SharedPreferences sp = getSharedPreferences("UserData", MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
 
         com.google.android.material.textfield.TextInputEditText first_name = (com.google.android.material.textfield.TextInputEditText) findViewById(R.id.first_name_profile);
@@ -295,8 +327,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
 
     // retrieves User Data from shared Preferences
     public void loadUserData(){
-        SharedPreferences sp;
-        sp = getSharedPreferences("UserData", MODE_PRIVATE);
+        SharedPreferences sp = getSharedPreferences("UserData", MODE_PRIVATE);
 
         com.google.android.material.textfield.TextInputEditText first_name = (com.google.android.material.textfield.TextInputEditText) findViewById(R.id.first_name_profile);
         com.google.android.material.textfield.TextInputEditText sur_name = (com.google.android.material.textfield.TextInputEditText) findViewById(R.id.sur_name_profile);

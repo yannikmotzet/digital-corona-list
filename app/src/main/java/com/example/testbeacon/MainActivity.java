@@ -278,7 +278,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
 
     public void sendData (String id){
         SharedPreferences sp = getSharedPreferences("UserData", MODE_PRIVATE);
-        SimpleDateFormat date_formatter = new SimpleDateFormat("yyyy-MM.dd HH:mm:ss");
+        SimpleDateFormat date_formatter = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat time_formatter = new SimpleDateFormat("HH:mm");
         Date now = new Date();
         Log.d(TAG, id);

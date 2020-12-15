@@ -91,8 +91,6 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         // http request for room list
         RoomListRequest();
 
-        SharedPreferences sp = getSharedPreferences("RoomList", MODE_PRIVATE);
-
         // bluetooth communication
         verifyBluetooth();
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {

@@ -1,6 +1,5 @@
 package com.example.testbeacon;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -9,11 +8,8 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -22,13 +18,16 @@ import android.os.Looper;
 import android.os.RemoteException;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.altbeacon.beacon.Beacon;
@@ -36,22 +35,33 @@ import org.altbeacon.beacon.BeaconConsumer;
 import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.BeaconParser;
 import org.altbeacon.beacon.Identifier;
-import org.altbeacon.beacon.MonitorNotifier;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
-import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
 
 public class MainActivity extends AppCompatActivity implements BeaconConsumer, RangeNotifier {
     protected static final String TAG = "MainActivity";
@@ -60,6 +70,10 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
     Region region;
     TreeSet<String> idList = new TreeSet<String>();
     Map<String, String> rooms = new HashMap<String, String>();
+
+    public String serverURL_getRoom = "http://192.168.1.115:5000/rooms?pw=12345!";
+    public String serverURL_postData = "http://192.168.1.115:5000/store";
+    public String json_string = "";
 
 
     @Override
@@ -74,6 +88,10 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         NavController navController = Navigation.findNavController(this,  R.id.fragment);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
 
+        // http request for room list
+        RoomListRequest();
+
+        SharedPreferences sp = getSharedPreferences("RoomList", MODE_PRIVATE);
 
         // bluetooth communication
         verifyBluetooth();
@@ -83,6 +101,9 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         else {
             Toast.makeText(MainActivity.this, "Permission already granted", Toast.LENGTH_SHORT).show();
         }
+
+        Log.d(TAG, "json_string");
+        Log.d(TAG, json_string);
     }
 
 
@@ -276,14 +297,14 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         return (double) tmp / factor;
     }
 
-    public void sendData (String id){
+    public void sendData (String room_name){
         SharedPreferences sp = getSharedPreferences("UserData", MODE_PRIVATE);
         SimpleDateFormat date_formatter = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat time_formatter = new SimpleDateFormat("HH:mm");
         Date now = new Date();
-        Log.d(TAG, id);
+        Log.d(TAG, room_name);
         // data
-        String room = id;
+        String room = room_name;
         String date = date_formatter.format(now);
         String time = time_formatter.format(now);
         String first_name = sp.getString("first_name", "");
@@ -304,6 +325,19 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
             e.printStackTrace();
         }
         //send http post with json
+        RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
+        StringRequest stringRequest = new StringRequest(com.android.volley.Request.Method.POST, serverURL_postData, new com.android.volley.Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+            }
+        }, new com.android.volley.Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        requestQueue.add(stringRequest);
         //check answer and make toast
     }
 
@@ -339,6 +373,40 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         phone.setText(sp.getString("phone", ""));
         e_mail.setText(sp.getString("e_mail", ""));
     }
+
+    // retrieve beacon-id room list from server and save to shared preferences
+    private void RoomListRequest(){
+        SharedPreferences sp = getSharedPreferences("RoomList", MODE_PRIVATE);
+        RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
+        StringRequest stringRequest = new StringRequest(com.android.volley.Request.Method.GET, serverURL_getRoom, new com.android.volley.Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                //return response;
+                Toast.makeText(MainActivity.this, "connected to server", Toast.LENGTH_LONG).show();
+                try {
+                    JSONObject obj = new JSONObject(response);
+                    JSONArray arr = obj.getJSONArray("rooms");
+                    SharedPreferences.Editor editor = sp.edit();
+                    for (int i = 0; i < arr.length(); i++){
+                        String id = arr.getJSONObject(i).getString("id");
+                        String room = arr.getJSONObject(i).getString("room");
+                        editor.putString(id, room);
+                        editor.apply();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new com.android.volley.Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(MainActivity.this, "no connection to server", Toast.LENGTH_LONG).show();
+            }
+        });
+        queue.add(stringRequest);
+    }
+
+
 
 }
 

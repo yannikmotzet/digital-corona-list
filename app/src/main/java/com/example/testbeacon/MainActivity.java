@@ -25,7 +25,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -38,12 +40,6 @@ import org.altbeacon.beacon.Identifier;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -56,12 +52,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-
 
 public class MainActivity extends AppCompatActivity implements BeaconConsumer, RangeNotifier {
     protected static final String TAG = "MainActivity";
@@ -71,9 +61,13 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
     TreeSet<String> idList = new TreeSet<String>();
     Map<String, String> rooms = new HashMap<String, String>();
 
-    public String serverURL_getRoom = "http://192.168.1.115:5000/rooms?pw=12345!";
-    public String serverURL_postData = "http://192.168.1.115:5000/store";
-    public String json_string = "";
+    //final static String SERVER_URL_GET_ROOM = "http://192.168.1.115:5000/rooms?pw=12345!";
+    //final static String SERVER_URL_POST_DATA = "http://192.168.1.115:5000/store";
+    final static String SERVER_URL_GET_ROOM = "http://192.168.1.118:5000/rooms?pw=12345!";
+    final static String SERVER_URL_POST_DATA = "http://192.168.1.118:5000/store";
+
+
+    final static String JSON_STRING = "";
 
 
     @Override
@@ -91,6 +85,8 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         // http request for room list
         RoomListRequest();
 
+        //sendData("htwg-f123");
+
         // bluetooth communication
         verifyBluetooth();
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
@@ -101,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         }
 
         Log.d(TAG, "json_string");
-        Log.d(TAG, json_string);
+        Log.d(TAG, JSON_STRING);
     }
 
 
@@ -324,19 +320,35 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         }
         //send http post with json
         RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
-        StringRequest stringRequest = new StringRequest(com.android.volley.Request.Method.POST, serverURL_postData, new com.android.volley.Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
 
-            }
-        }, new com.android.volley.Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
+        JsonObjectRequest req = new JsonObjectRequest(SERVER_URL_POST_DATA, obj,
+            new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    String answer;
+                    try {
+                        Integer error = response.getInt("error");
+                        if (error == 0) {
+                            String room = response.getJSONObject("answer").getString("room");
+                            String event = response.getJSONObject("answer").getString("event_name");
+                            answer = "data stored:" + " " + event + " (" + room + ")";
+                        }
+                        else {
+                            answer = response.getString("answer");
+                        }
+                        Toast.makeText(MainActivity.this, answer, Toast.LENGTH_LONG).show();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(MainActivity.this, "data not stored", Toast.LENGTH_LONG).show();
+                }
         });
-        requestQueue.add(stringRequest);
-        //check answer and make toast
+
+        requestQueue.add(req);
     }
 
     // saves User Data in shared Preferences
@@ -376,11 +388,11 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
     private void RoomListRequest(){
         SharedPreferences sp = getSharedPreferences("RoomList", MODE_PRIVATE);
         RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
-        StringRequest stringRequest = new StringRequest(com.android.volley.Request.Method.GET, serverURL_getRoom, new com.android.volley.Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(com.android.volley.Request.Method.GET, SERVER_URL_GET_ROOM, new com.android.volley.Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 //return response;
-                Toast.makeText(MainActivity.this, "connected to server", Toast.LENGTH_LONG).show();
+                //.makeText(MainActivity.this, "connected to server", Toast.LENGTH_LONG).show();
                 try {
                     JSONObject obj = new JSONObject(response);
                     JSONArray arr = obj.getJSONArray("rooms");

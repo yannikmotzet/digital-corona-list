@@ -67,6 +67,7 @@ def return_events():
 @app.route('/store', methods=['POST'])
 def store_user_data():
     client_data_json = request.get_json()
+    print(client_data_json)
     room = client_data_json['room']
     date = client_data_json['date']
     time = client_data_json['time']
@@ -87,9 +88,9 @@ def store_user_data():
                 data = room + "," + date + "," + event_start_time +  "," +  event_end_time +  "," +  event_name +  "," + time + "," + given_name + "," + sur_name + "," + phone + "," + e_mail +'\n'
                 with open(DATABASE_LIST_PATH,'a') as fd:
                     fd.write(data)
-                return jsonify([{'room': room, 'event_name': event_name}])
+                return jsonify({'answer':{'room': room, 'event_name': event_name}, 'error': 0})
 
-    return 'ERROR: no lecture found'
+    return jsonify({'answer': "ERROR: no event found", 'error': 1})
 
 # http get for entry
 @app.route('/participants', methods=['GET'])

@@ -30,15 +30,18 @@ csv_df.to_csv(DATABASE_LIST_PATH, index=False)
 
 
 # rooms database
-with open(DATABASE_ROOMS_PATH) as json_file_rooms:
-    rooms_json = json.load(json_file_rooms)
+def load_rooms():
+    with open(DATABASE_ROOMS_PATH) as json_file_rooms:
+        rooms_json = json.load(json_file_rooms)
+        return rooms_json
 
 
 # events database
-with open(DATABASE_EVENTS_PATH) as json_file_events:
-    events_json = json.load(json_file_events)
-events_df = pd.read_json(DATABASE_EVENTS_PATH, convert_dates=False)
-print(events_df)
+def load_events():
+    with open(DATABASE_EVENTS_PATH) as json_file_events:
+        events_json = json.load(json_file_events)
+    events_df = pd.read_json(DATABASE_EVENTS_PATH, convert_dates=False)
+    return events_json, events_df
 
 
 # html home page
@@ -51,6 +54,7 @@ def home():
 # http get for rooms
 @app.route('/rooms', methods=['GET'])
 def return_rooms():
+    rooms_json = load_rooms()
     if 'pw' in request.args and request.args['pw'] == PASSPHRASE:
         return jsonify(rooms_json)
     else:
@@ -60,6 +64,7 @@ def return_rooms():
 # http get for events
 @app.route('/events', methods=['GET'])
 def return_events():
+    __, events_json = load_events()
     return jsonify(events_json)
 
 
@@ -67,7 +72,6 @@ def return_events():
 @app.route('/store', methods=['POST'])
 def store_user_data():
     client_data_json = request.get_json()
-    print(client_data_json)
     room = client_data_json['room']
     date = client_data_json['date']
     time = client_data_json['time']
@@ -77,6 +81,7 @@ def store_user_data():
     e_mail = client_data_json['e_mail']
 
     # find corresponding lecture
+    __, events_df = load_events()
     for __, row in events_df.iterrows():
         if row['room'] == room and row['date'] == date:
             if datetime.strptime(row['start_time'], "%H:%M") <= datetime.strptime(time, "%H:%M") and datetime.strptime(row['end_time'], "%H:%M") >= datetime.strptime(time, "%H:%M"):
@@ -101,7 +106,6 @@ def return_participants():
     start_time = client_data_json['start_time']
     # check csv
     csv_df = pd.read_csv(DATABASE_LIST_PATH, parse_dates=False)
-    print(csv_df)
     for index, row in csv_df.iterrows():
         if (row['room'] == room) and (row['date'] == date) and (row['start_time'] == start_time):
             continue

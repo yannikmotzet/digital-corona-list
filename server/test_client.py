@@ -1,7 +1,7 @@
 import requests
 import pandas as pd
 
-ip_addr = 'http://192.168.1.115' +':5000'
+ip_addr = 'http://192.168.1.118' +':5000'
 
 data_store_1 = {'room': 'htwg-f123',
      'date': '2020-04-01',
@@ -33,7 +33,7 @@ r = requests.post(url, json=data_store_2)
 print(r.text)
 
 # get rooms
-url = 'http://192.168.1.115:5000/rooms?pw=12345!'
+url = ip_addr + '/rooms?pw=12345!'
 r = requests.get(url)
 rooms_df = pd.read_json(r.text)
 print(rooms_df)

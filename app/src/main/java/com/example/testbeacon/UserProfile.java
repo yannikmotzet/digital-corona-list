@@ -4,18 +4,15 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
-import java.io.BufferedReader;
-
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link user_profile#newInstance} factory method to
+ * Use the {@link UserProfile#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class user_profile extends Fragment {
+public class UserProfile extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -26,7 +23,7 @@ public class user_profile extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public user_profile() {
+    public UserProfile() {
         // Required empty public constructor
     }
 
@@ -39,8 +36,8 @@ public class user_profile extends Fragment {
      * @return A new instance of fragment user_profile.
      */
     // TODO: Rename and change types and number of parameters
-    public static user_profile newInstance(String param1, String param2) {
-        user_profile fragment = new user_profile();
+    public static UserProfile newInstance(String param1, String param2) {
+        UserProfile fragment = new UserProfile();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);

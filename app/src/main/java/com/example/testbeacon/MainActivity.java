@@ -420,28 +420,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         queue.add(stringRequest);
     }
 
-    // open mail app for sending feedback
-    public void feedback (View v) {
-        String mailto = "mailto:feedback@digitalcoronalist.com" +
-                "?cc=" +
-                "&subject=" + Uri.encode("Feedback") +
-                "&body=" + Uri.encode("");
-        Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
-        emailIntent.setData(Uri.parse(mailto));
 
-        try {
-            startActivity(emailIntent);
-        } catch (ActivityNotFoundException e) {
-            Toast.makeText(MainActivity.this, "Error to open email app", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    // open browser and navigate to github page
-    public void contribute (View v) {
-        Uri uri = Uri.parse("https://github.com/yannikmotzet/digital-corona-list");
-        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-        startActivity(intent);
-    }
 
 
 }

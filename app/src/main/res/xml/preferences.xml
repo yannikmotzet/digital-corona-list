@@ -1,0 +1,43 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="Settings">
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="switch_preference"
+            android:title="background beacon scanning" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="About">
+    <Preference
+        android:selectable="false"
+        android:enabled="true"
+        android:title="Version"
+        android:summary="1.0.0" />
+
+    <Preference
+        android:selectable="false"
+        android:enabled="true"
+        android:title="Developers"
+        android:summary="Max Dunger, Yannik Motzet" />
+
+    <Preference
+        android:selectable="true"
+        android:enabled="true"
+        android:title="Feedback">
+        <intent android:action="android.intent.action.SENDTO"
+            android:data="mailto:feedback@digitalcoronalist.com&amp;subject=Feedback" />
+    </Preference>
+
+    <Preference
+        android:selectable="true"
+        android:enabled="true"
+        android:title="Contribute">
+        <intent android:action="android.intent.action.VIEW"
+            android:data="https://github.com/yannikmotzet/digital-corona-list" />
+    </Preference>
+    </PreferenceCategory>
+
+</PreferenceScreen>

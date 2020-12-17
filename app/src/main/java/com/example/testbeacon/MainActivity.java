@@ -9,9 +9,12 @@ import androidx.navigation.ui.NavigationUI;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -397,6 +400,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
                     JSONObject obj = new JSONObject(response);
                     JSONArray arr = obj.getJSONArray("rooms");
                     SharedPreferences.Editor editor = sp.edit();
+                    editor.clear();
                     for (int i = 0; i < arr.length(); i++){
                         String id = arr.getJSONObject(i).getString("id");
                         String room = arr.getJSONObject(i).getString("room");
@@ -416,6 +420,22 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         queue.add(stringRequest);
     }
 
+    public void feedback (View v) {
+        String mailto = "mailto:feedback@digitalcoronalist.com" +
+                "?cc=" +
+                "&subject=" + Uri.encode("Feedback") +
+                "&body=" + Uri.encode("Feedback: ");
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+        emailIntent.setData(Uri.parse(mailto));
+
+        try {
+            startActivity(emailIntent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(MainActivity.this, "Error to open email app", Toast.LENGTH_SHORT).show();
+        }
+
+
+    }
 
 
 }

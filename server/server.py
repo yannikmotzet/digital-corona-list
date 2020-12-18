@@ -88,6 +88,14 @@ def store_user_data():
                 event_start_time = row['start_time']
                 event_end_time = row['end_time']
                 event_name = row['name']
+
+                # check if already stored
+                csv_df = pd.read_csv(DATABASE_LIST_PATH, parse_dates=False)
+                for __, csv_row in csv_df.iterrows():
+                    if (csv_row['room'] == room) and (csv_row['date'] == date):
+                        if (csv_row['start_time'] == event_start_time) and (csv_row['name'] == event_name):
+                            if(csv_row['first_name'] == given_name) and(csv_row['sur_name'] == sur_name):
+                                return jsonify({'answer': "ERROR: data already saved", 'error': 1})
     
                 # store data in csv
                 data = room + "," + date + "," + event_start_time +  "," +  event_end_time +  "," +  event_name +  "," + time + "," + given_name + "," + sur_name + "," + phone + "," + e_mail +'\n'

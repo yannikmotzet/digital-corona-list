@@ -5,8 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".UserProfile">
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/linearLayout2"
@@ -26,9 +25,10 @@
                 android:id="@+id/first_name_profile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
                 android:drawableLeft="@drawable/user_icon"
-                android:drawablePadding="10dp" />
+                android:background="@android:color/transparent"
+                android:drawablePadding="10dp"/>
+
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -41,8 +41,8 @@
                 android:id="@+id/sur_name_profile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
                 android:drawableLeft="@drawable/family"
+                android:background="@android:color/transparent"
                 android:drawablePadding="10dp" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -56,8 +56,8 @@
                 android:id="@+id/phone_profile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
                 android:drawableLeft="@drawable/phone"
+                android:background="@android:color/transparent"
                 android:drawablePadding="10dp" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -70,8 +70,8 @@
                 android:id="@+id/email_profile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
                 android:drawableLeft="@drawable/email"
+                android:background="@android:color/transparent"
                 android:drawablePadding="10dp" />
         </com.google.android.material.textfield.TextInputLayout>
 

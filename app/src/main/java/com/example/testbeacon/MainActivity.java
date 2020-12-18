@@ -307,7 +307,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         String first_name = sp.getString("first_name", "");
         String sur_name = sp.getString("sur_name", "");
         String phone = sp.getString("phone", "");
-        String e_mail = sp.getString("e-mail", "");
+        String e_mail = sp.getString("e_mail", "");
         //create json object
         JSONObject obj = new JSONObject();
         try {

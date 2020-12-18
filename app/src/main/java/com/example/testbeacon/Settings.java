@@ -2,14 +2,23 @@ package com.example.testbeacon;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
+import android.nfc.Tag;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.SwitchPreference;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -52,21 +61,36 @@ public class Settings extends PreferenceFragmentCompat  {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        SwitchPreference switchScanning = (SwitchPreference) getPreferenceManager().findPreference("switch_scanning");
+        switchScanning.setChecked(((MainActivity)getActivity()).getSwitchState());
+        switchScanning.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                ((MainActivity)getActivity()).saveSwitchState((boolean) newValue);
+                return true;
+            }
+        });
+
+        SwitchPreference switchDark = (SwitchPreference) getPreferenceManager().findPreference("switch_dark");
+        switchDark.setChecked((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES);
+        switchDark.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                ((MainActivity)getActivity()).setDarkMode();
+                return true;
+            }
+        });
     }
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-        addPreferencesFromResource(R.xml.preferences);
+        // Indicate here the XML resource you created above that holds the preferences
+        setPreferencesFromResource(R.xml.preferences, rootKey);
     }
-
-//    @Override
-//    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-//                             Bundle savedInstanceState) {
-//        // Inflate the layout for this fragment
-//        return inflater.inflate(R.layout.fragment_settings, container, false);
-//    }
 }

@@ -1,6 +1,7 @@
 package com.example.testbeacon;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
@@ -9,12 +10,10 @@ import androidx.navigation.ui.NavigationUI;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.net.Uri;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -420,8 +419,26 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         queue.add(stringRequest);
     }
 
+    public void saveSwitchState(boolean isChecked) {
+        SharedPreferences sp_switch = getSharedPreferences("Switch", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp_switch.edit();
+        editor.putBoolean("switch_scanning", isChecked);
+        editor.apply();
+    }
 
+    public boolean getSwitchState(){
+        SharedPreferences sp_switch = getSharedPreferences("Switch", MODE_PRIVATE);
+        return sp_switch.getBoolean("switch_scanning", true);
+    }
 
+    public void setDarkMode() {
+        int isNightTheme = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        if (isNightTheme == Configuration.UI_MODE_NIGHT_YES) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        } else if (isNightTheme == Configuration.UI_MODE_NIGHT_NO ){
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        }
+    }
 
 }
 

@@ -3,7 +3,7 @@
 
     <item
         android:id="@+id/Home_Fragment"
-        android:title="Home" android:icon="@drawable/home_icon"/>
+        android:title="Home" android:icon="@drawable/home_icon" />
 
     <item
         android:id="@+id/Profile_Fragment"

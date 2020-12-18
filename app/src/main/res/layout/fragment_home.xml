@@ -5,8 +5,7 @@
     android:id="@+id/fragment_home"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".Home_Fragment">
+    android:orientation="vertical">
 
     <Button
         android:id="@+id/scanButton"

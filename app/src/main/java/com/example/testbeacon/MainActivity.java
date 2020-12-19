@@ -33,6 +33,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
@@ -76,6 +77,20 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        new MaterialAlertDialogBuilder(this)
+                .setTitle("Consent")
+                .setMessage("By tapping \"Accept\", you consent to the App to store your personal data on a App's server system. Your data will be deleted after 3 weeks.")
+                .setPositiveButton("Accept", null)
+                .setNegativeButton("Do not accept", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                        System.exit(0);
+                    }
+                })
+                .setCancelable(false)
+                .show();
 
         rooms.put("0x00112233445566778898", "HTWG-F123");
 

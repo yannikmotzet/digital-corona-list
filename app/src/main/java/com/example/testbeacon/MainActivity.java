@@ -78,21 +78,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        new MaterialAlertDialogBuilder(this)
-                .setTitle("Consent")
-                .setMessage("By tapping \"Accept\", you consent to the App to store your personal data on a App's server system. Your data will be deleted after 3 weeks.")
-                .setPositiveButton("Accept", null)
-                .setNegativeButton("Do not accept", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                        System.exit(0);
-                    }
-                })
-                .setCancelable(false)
-                .show();
-
-        rooms.put("0x00112233445566778898", "HTWG-F123");
+        showConsentsPopup();
 
         // layout
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_view);
@@ -105,12 +91,13 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         //sendData("htwg-f123");
 
         // bluetooth communication
+        rooms.put("0x00112233445566778898", "HTWG-F123");
         verifyBluetooth();
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
             ActivityCompat.requestPermissions(MainActivity.this, new String[] { Manifest.permission.ACCESS_FINE_LOCATION }, PERMISSION_REQUEST_FINE_LOCATION);
         }
         else {
-            Toast.makeText(MainActivity.this, "Permission already granted", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(MainActivity.this, "Permission already granted", Toast.LENGTH_SHORT).show();
         }
 
         Log.d(TAG, "json_string");
@@ -308,6 +295,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         return (double) tmp / factor;
     }
 
+    // http post for storing user data
     public void sendData (String room_name){
         SharedPreferences sp = getSharedPreferences("UserData", MODE_PRIVATE);
         SimpleDateFormat date_formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -434,24 +422,55 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         queue.add(stringRequest);
     }
 
+    // saves state of swttings switch for background scanning to shared preferences
     public void saveSwitchState(boolean isChecked) {
-        SharedPreferences sp_switch = getSharedPreferences("Switch", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sp_switch.edit();
+        SharedPreferences sp_settings = getSharedPreferences("Settings", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp_settings.edit();
         editor.putBoolean("switch_scanning", isChecked);
         editor.apply();
     }
 
+    // retrieves state of swttings switch for background scanning from shared preferences
     public boolean getSwitchState(){
-        SharedPreferences sp_switch = getSharedPreferences("Switch", MODE_PRIVATE);
-        return sp_switch.getBoolean("switch_scanning", true);
+        SharedPreferences sp_settings = getSharedPreferences("Settings", MODE_PRIVATE);
+        return sp_settings.getBoolean("switch_scanning", true);
     }
 
+    // force dark theme
     public void setDarkMode() {
         int isNightTheme = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
         if (isNightTheme == Configuration.UI_MODE_NIGHT_YES) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         } else if (isNightTheme == Configuration.UI_MODE_NIGHT_NO ){
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        }
+    }
+
+    // shows consents popup
+    public void showConsentsPopup() {
+        SharedPreferences sp_settings = getSharedPreferences("Settings", MODE_PRIVATE);
+
+        if (sp_settings.getBoolean("consents", false) == false){
+            new MaterialAlertDialogBuilder(this)
+                    .setTitle("Consent")
+                    .setMessage("By tapping \"Accept\", you consent to the App to store your personal data on a App's server system. Your data will be deleted after 3 weeks.")
+                    .setPositiveButton("Accept", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            SharedPreferences.Editor editor = sp_settings.edit();
+                            editor.putBoolean("consents", true);
+                            editor.apply();
+                        }
+                    })
+                    .setNegativeButton("Do not accept", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                            System.exit(0);
+                        }
+                    })
+                    .setCancelable(false)
+                    .show();
         }
     }
 

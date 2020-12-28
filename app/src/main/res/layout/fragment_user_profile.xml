@@ -58,7 +58,8 @@
                 android:layout_height="wrap_content"
                 android:drawableLeft="@drawable/phone"
                 android:background="@android:color/transparent"
-                android:drawablePadding="10dp" />
+                android:drawablePadding="10dp"
+                android:inputType="phone"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -72,7 +73,8 @@
                 android:layout_height="wrap_content"
                 android:drawableLeft="@drawable/email"
                 android:background="@android:color/transparent"
-                android:drawablePadding="10dp" />
+                android:drawablePadding="10dp"
+                android:inputType="textEmailAddress"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
@@ -85,6 +87,7 @@
             android:text="SAVE"
             android:onClick="saveUserData"/>
     </LinearLayout>
+
 </LinearLayout>
 
 

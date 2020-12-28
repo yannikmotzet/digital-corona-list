@@ -64,9 +64,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
     TreeSet<String> idList = new TreeSet<String>();
     Map<String, String> rooms = new HashMap<String, String>();
 
-    //final static String SERVER_URL_GET_ROOM = "http://192.168.1.115:5000/rooms?pw=12345!";
-    //final static String SERVER_URL_POST_DATA = "http://192.168.1.115:5000/store";
-    final static String SERVER_URL_GET_ROOM = "http://192.168.1.118:5000/rooms?pw=12345!";
+    final static String SERVER_URL_GET_ROOM = "http://192.168.1.118:5000/rooms";
     final static String SERVER_URL_POST_DATA = "http://192.168.1.118:5000/store";
 
 
@@ -211,14 +209,20 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
                         " and instance id: "+instanceId+
                         " approximately "+beacon.getDistance()+" meters away.");
 
-
                 if(!idList.contains(namespaceId.toString())) {
-
                     TextView idText = new TextView(this);
                     TextView distanceText = new TextView(this);
                     String roomname = rooms.get(namespaceId.toString());
                     Double distance = round(beacon.getDistance(),2);
-                    idText.setText("Raum: " + roomname);
+
+                    // get beacon id
+                    String id = namespaceId.toString();
+                    // get room name
+                    SharedPreferences sp = getSharedPreferences("RoomList", MODE_PRIVATE);
+                    String room = sp.getString(id, "");
+
+                    // idText.setText("Raum: " + roomname);
+                    idText.setText("Raum: " + room);
                     distanceText.setText("Entfernung: " + distance + "m");
                     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                     params.gravity = Gravity.CENTER;
@@ -453,7 +457,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         if (sp_settings.getBoolean("consents", false) == false){
             new MaterialAlertDialogBuilder(this)
                     .setTitle("Consent")
-                    .setMessage("By tapping \"Accept\", you consent to the App to store your personal data on a App's server system. Your data will be deleted after 3 weeks.")
+                    .setMessage("By tapping \"Accept\", you consent to the App to store your personal data on a App's server system. Your data will be deleted after 4 weeks.")
                     .setPositiveButton("Accept", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {

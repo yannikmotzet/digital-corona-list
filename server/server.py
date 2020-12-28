@@ -10,7 +10,7 @@ __author__ = 'Yannik Motzet'
 __email__ = 'yannik.motzet@outlook.com'
 
 PASSPHRASE="12345!"
-MAX_STORAGE_DAYS = 21
+MAX_STORAGE_DAYS = 28
 DATABASE_LIST_PATH = "storage.csv"
 DATABASE_ROOMS_PATH = './rooms.json'
 DATABASE_EVENTS_PATH = './events.json'
@@ -29,14 +29,14 @@ for index, row in csv_df.iterrows():
 csv_df.to_csv(DATABASE_LIST_PATH, index=False)
 
 
-# rooms database
+# get rooms list
 def load_rooms():
     with open(DATABASE_ROOMS_PATH) as json_file_rooms:
         rooms_json = json.load(json_file_rooms)
         return rooms_json
 
 
-# events database
+# get events list
 def load_events():
     with open(DATABASE_EVENTS_PATH) as json_file_events:
         events_json = json.load(json_file_events)
@@ -55,10 +55,7 @@ def home():
 @app.route('/rooms', methods=['GET'])
 def return_rooms():
     rooms_json = load_rooms()
-    if 'pw' in request.args and request.args['pw'] == PASSPHRASE:
-        return jsonify(rooms_json)
-    else:
-        return '''access denied'''
+    return jsonify(rooms_json)
 
 
 # http get for events
@@ -105,7 +102,8 @@ def store_user_data():
 
     return jsonify({'answer': "ERROR: no event found", 'error': 1})
 
-# http get for entry
+
+# http get for corona case, returns all entries of corresponding event
 @app.route('/participants', methods=['GET'])
 def return_participants():
     client_data_json = request.get_json()

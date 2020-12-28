@@ -33,7 +33,7 @@ r = requests.post(url, json=data_store_2)
 print(r.text)
 
 # get rooms
-url = ip_addr + '/rooms?pw=12345!'
+url = ip_addr + '/rooms'
 r = requests.get(url)
 rooms_df = pd.read_json(r.text)
 print(rooms_df)

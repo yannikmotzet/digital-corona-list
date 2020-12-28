@@ -90,6 +90,11 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
 
         // bluetooth communication
         rooms.put("0x00112233445566778898", "HTWG-F123");
+        SharedPreferences sp = getSharedPreferences("RoomList", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString("0x00112233445566778898", "HTWG-F123");
+        editor.apply();
+
         verifyBluetooth();
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
             ActivityCompat.requestPermissions(MainActivity.this, new String[] { Manifest.permission.ACCESS_FINE_LOCATION }, PERMISSION_REQUEST_FINE_LOCATION);

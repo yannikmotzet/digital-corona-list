@@ -3,6 +3,7 @@ package com.example.testbeacon;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,6 +61,18 @@ public class Home extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        final SwipeRefreshLayout pullToRefresh = ((MainActivity)getActivity()).findViewById(R.id.swiperefresh);
+        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                ((MainActivity)getActivity()).scanClicked(((MainActivity)getActivity()).findViewById(R.id.fragment_home));
+                pullToRefresh.setRefreshing(false);
+            }
+        });
     }
 
 

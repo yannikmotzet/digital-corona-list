@@ -91,7 +91,7 @@ def store_user_data():
                 for __, csv_row in csv_df.iterrows():
                     if (csv_row['room'] == room) and (csv_row['date'] == date):
                         if (csv_row['start_time'] == event_start_time) and (csv_row['name'] == event_name):
-                            if(csv_row['first_name'] == given_name) and(csv_row['sur_name'] == sur_name):
+                            if(csv_row['given_name'] == given_name) and(csv_row['sur_name'] == sur_name):
                                 return jsonify({'answer': "ERROR: data already saved", 'error': 1})
     
                 # store data in csv

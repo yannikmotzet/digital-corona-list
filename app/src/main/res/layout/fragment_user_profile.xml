@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:hint="First Name">
+            android:hint="Given Name">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/first_name_profile"

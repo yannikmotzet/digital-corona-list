@@ -3,6 +3,7 @@ package com.example.testbeacon;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -14,6 +15,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -64,21 +66,23 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
     TreeSet<String> idList = new TreeSet<String>();
     Map<String, String> rooms = new HashMap<String, String>();
 
+    // server urls
     final static String SERVER_URL_GET_ROOM = "http://192.168.1.118:5000/rooms";
     final static String SERVER_URL_POST_DATA = "http://192.168.1.118:5000/store";
 
 
     final static String JSON_STRING = "";
 
-
+    // this method is called when the app is started
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // popup: user has to consent that his data will be stored
         showConsentsPopup();
 
-        // layout
+        // layout: bottom navigation view to navigate between fragments
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_view);
         NavController navController = Navigation.findNavController(this,  R.id.fragment);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
@@ -86,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         // http request for room list
         RoomListRequest();
 
+        // for bebugging purpose: send http request for storing data on server
         //sendData("htwg-f123");
 
         // bluetooth communication
@@ -95,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         editor.putString("0x00112233445566778898", "HTWG-F123");
         editor.apply();
 
+        // TODO comment method
         verifyBluetooth();
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
             ActivityCompat.requestPermissions(MainActivity.this, new String[] { Manifest.permission.ACCESS_FINE_LOCATION }, PERMISSION_REQUEST_FINE_LOCATION);
@@ -108,9 +114,10 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
     }
 
 
+    // this method is called when the app is resumed from background
     public void onResume(){
         super.onResume();
-
+        // TODO comment method
         mBeaconManager = BeaconManager.getInstanceForApplication(this.getApplicationContext());
         // Detect the main Eddystone-UID frame:
         mBeaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(BeaconParser.EDDYSTONE_UID_LAYOUT));
@@ -118,15 +125,16 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
 
     }
 
+    // this method is called when the app is closed but not exited
     @Override
     public void onPause() {
         super.onPause();
+        // TODO comment method
         mBeaconManager.unbind(this);
     }
 
 
-
-
+    // TODO comment method
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
@@ -143,7 +151,6 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
                         @Override
                         public void onDismiss(DialogInterface dialog) {
                         }
-
                     });
                     builder.show();
                 }
@@ -152,8 +159,8 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         }
     }
 
+    // TODO comment method
     private void verifyBluetooth() {
-
         try {
             if (!BeaconManager.getInstanceForApplication(this).checkAvailability()) {
                 final AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -176,19 +183,17 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
             builder.setMessage("Sorry, this device does not support Bluetooth LE.");
             builder.setPositiveButton(android.R.string.ok, null);
             builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-
                 @Override
                 public void onDismiss(DialogInterface dialog) {
                     //finish();
                     //System.exit(0);
                 }
-
             });
             builder.show();
-
         }
     }
 
+    // TODO comment method
     @Override
     public void onBeaconServiceConnect() {
         /*
@@ -203,6 +208,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
          */
     }
 
+    // TODO comment method
     @Override
     public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
         for (Beacon beacon: beacons) {
@@ -255,8 +261,8 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         }
     }
 
+    // TODO comment method
     public void scanClicked (View v){
-
         idList.clear();
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
         linearLayout.removeAllViews();
@@ -286,6 +292,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
 
     }
 
+    // TODO comment method
     public void stopScan (View v){
         try{
             mBeaconManager.stopRangingBeaconsInRegion(region);
@@ -295,16 +302,16 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         }
     }
 
+    // TODO comment method
     public static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
-
         long factor = (long) Math.pow(10, places);
         value = value * factor;
         long tmp = Math.round(value);
         return (double) tmp / factor;
     }
 
-    // http post for storing user data
+    // http post for storing user data on server
     public void sendData (String room_name){
         SharedPreferences sp = getSharedPreferences("UserData", MODE_PRIVATE);
         SimpleDateFormat date_formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -365,7 +372,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         requestQueue.add(req);
     }
 
-    // saves User Data in shared Preferences
+    // save user data in shared preferences
     public void saveUserData(View v){
         SharedPreferences sp = getSharedPreferences("UserData", MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
@@ -383,7 +390,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         Toast.makeText(this, "Information saved.", Toast.LENGTH_LONG).show();
     }
 
-    // retrieves User Data from shared Preferences
+    // retrieve user data from shared preferences and put text in text fields of profile fragment
     public void loadUserData(){
         SharedPreferences sp = getSharedPreferences("UserData", MODE_PRIVATE);
 
@@ -431,7 +438,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         queue.add(stringRequest);
     }
 
-    // saves state of swttings switch for background scanning to shared preferences
+    // save state of settings switch for background scanning to shared preferences
     public void saveSwitchState(boolean isChecked) {
         SharedPreferences sp_settings = getSharedPreferences("Settings", MODE_PRIVATE);
         SharedPreferences.Editor editor = sp_settings.edit();
@@ -439,7 +446,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         editor.apply();
     }
 
-    // retrieves state of swttings switch for background scanning from shared preferences
+    // retrieve state of settings switch for background scanning from shared preferences
     public boolean getSwitchState(){
         SharedPreferences sp_settings = getSharedPreferences("Settings", MODE_PRIVATE);
         return sp_settings.getBoolean("switch_scanning", true);
@@ -455,7 +462,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         }
     }
 
-    // shows consents popup
+    // show consents popup
     public void showConsentsPopup() {
         SharedPreferences sp_settings = getSharedPreferences("Settings", MODE_PRIVATE);
 

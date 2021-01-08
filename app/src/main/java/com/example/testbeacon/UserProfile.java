@@ -57,12 +57,14 @@ public class UserProfile extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        // inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_user_profile, container, false);
     }
 
+    // this method is called after the fragment is created
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        // load user data from shared preferences and fill text inputs
         ((MainActivity)getActivity()).loadUserData();
     }
 }

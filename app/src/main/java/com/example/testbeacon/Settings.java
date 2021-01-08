@@ -46,6 +46,7 @@ public class Settings extends PreferenceFragmentCompat  {
         return fragment;
     }
 
+    // this method is called when the fragment is created (user navigates to fragment)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +56,7 @@ public class Settings extends PreferenceFragmentCompat  {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
+        // retrieve state of background scanning switch from shared preferences and set stored state, store when state changes
         SwitchPreference switchScanning = (SwitchPreference) getPreferenceManager().findPreference("switch_scanning");
         switchScanning.setChecked(((MainActivity)getActivity()).getSwitchState());
         switchScanning.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -65,6 +67,7 @@ public class Settings extends PreferenceFragmentCompat  {
             }
         });
 
+        // retrieve state of dark theme switch from shared preferences and set stored state, store when state changes
         SwitchPreference switchDark = (SwitchPreference) getPreferenceManager().findPreference("switch_dark");
         switchDark.setChecked((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES);
         switchDark.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {

@@ -71,7 +71,7 @@ public class Home extends Fragment {
             @Override
             public void onRefresh() {
                 ((MainActivity)getActivity()).scanClicked(((MainActivity)getActivity()).findViewById(R.id.fragment_home));
-                pullToRefresh.setRefreshing(false);
+                //pullToRefresh.setRefreshing(false);
             }
         });
     }

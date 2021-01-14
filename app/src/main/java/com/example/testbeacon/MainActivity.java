@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -67,8 +68,10 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
     Map<String, String> rooms = new HashMap<String, String>();
 
     // server urls
-    final static String SERVER_URL_GET_ROOM = "http://192.168.1.118:5000/rooms";
-    final static String SERVER_URL_POST_DATA = "http://192.168.1.118:5000/store";
+    // url for http request to get room list
+    final static String SERVER_URL_GET_ROOM = "http://192.168.1.130:5000/rooms";
+    // url for http post to store data on server
+    final static String SERVER_URL_POST_DATA = "http://192.168.1.130:5000/store";
 
 
     final static String JSON_STRING = "";
@@ -97,7 +100,8 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         rooms.put("0x00112233445566778898", "HTWG-F123");
         SharedPreferences sp = getSharedPreferences("RoomList", MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
-        editor.putString("0x00112233445566778898", "HTWG-F123");
+        editor.putString("0x00112233445566778898", "htwg-f123");
+        editor.putString("0x00112233445566778899", "htwg-f124");
         editor.apply();
 
         // TODO comment method
@@ -243,7 +247,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
                     View.OnClickListener listener = new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            sendData(namespaceId.toString());
+                            sendData(room);
                         }
                     };
                     postButton.setOnClickListener(listener);
@@ -255,6 +259,10 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
                     linearLayout.addView(postButton);
                     idList.add(namespaceId.toString());
 
+                    // turn off swipe to refresh animation
+                    final SwipeRefreshLayout pullToRefresh = this.findViewById(R.id.swiperefresh);
+                    pullToRefresh.setRefreshing(false);
+
                 }
             }
 
@@ -265,6 +273,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
     public void scanClicked (View v){
         idList.clear();
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
+
         linearLayout.removeAllViews();
         region = new Region("all-beacons-region", null, null, null);
         try {
@@ -284,7 +293,6 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
                 catch (RemoteException e){
                     e.printStackTrace();
                 }
-
             }
         }, 10000);
 

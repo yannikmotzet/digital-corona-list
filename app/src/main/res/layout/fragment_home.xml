@@ -1,17 +1,28 @@
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/swiperefresh"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <LinearLayout
         android:id="@+id/fragment_home"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <TextView
+            android:padding="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:text="Rooms nearby:" />
+
+
+        <!--
         <Button
             android:id="@+id/scanButton"
             android:layout_width="wrap_content"
@@ -28,6 +39,9 @@
             android:layout_gravity="center"
             android:onClick="stopScan"
             android:text="Stop Scan" />
+        -->
+
+
 
         <LinearLayout
             android:id="@+id/linearLayout"
@@ -35,6 +49,13 @@
             android:layout_height="match_parent"
             android:layout_marginTop="5dp"
             android:orientation="vertical">
+
+            <TextView
+                android:padding="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="no room found \n (swipe to refresh)" />
         </LinearLayout>
 
     </LinearLayout>

@@ -237,8 +237,8 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
                     String room = sp.getString(id, "");
 
                     // idText.setText("Raum: " + roomname);
-                    idText.setText("Raum: " + room);
-                    distanceText.setText("Entfernung: " + distance + "m");
+                    idText.setText("room: " + room);
+                    distanceText.setText("distance: " + distance + " m");
                     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                     params.gravity = Gravity.CENTER;
                     distanceText.setLayoutParams(params);
@@ -252,7 +252,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
                     };
                     postButton.setOnClickListener(listener);
                     postButton.setLayoutParams(params);
-                    postButton.setText("senden");
+                    postButton.setText("SEND");
                     LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
                     linearLayout.addView(idText);
                     linearLayout.addView(distanceText);

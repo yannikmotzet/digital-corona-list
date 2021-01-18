@@ -54,6 +54,8 @@ public class BackgroundApplication extends Application implements BootstrapNotif
                 .setContentTitle("A room was detected!")
                 .setContentText("Please tap on this notification to log your attendance.")
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
+                // remove notification after clicking
+                .setAutoCancel(true)
                 // by pressing on notification, the app will be opened
                 .setContentIntent(pendingIntent);
 

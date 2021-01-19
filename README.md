@@ -1,10 +1,8 @@
 # digital-corona-list
 automatic digital corona list for public places using BLE beacons
 
-<img src="screenshots/1.png" alt="Home" title="" />
-<img src="screenshots/2.png" alt="Profile" title="" />
-<img src="screenshots/3.png" alt="Settings" title="" />
-<br/>
-<img src="screenshots/dark1.png" alt="Home" title="" />
-<img src="screenshots/dark2.png" alt="Profile" title="" />
-<img src="screenshots/dark3.png" alt="Settings" title="" />
+<img src="material/system_architecture.png" alt="architecture" title="" />
+<img src="material/app_light.png" alt="architecture" title="" />
+<img src="material/app_dark.png" alt="architecture" title="" />
+
+

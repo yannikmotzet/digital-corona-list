@@ -58,7 +58,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
+// Activity with Bottom Navigation View
+// the App consists of this single Activity
+// in the View of the Activity Fragments will be embedded
 public class MainActivity extends AppCompatActivity implements BeaconConsumer, RangeNotifier {
     protected static final String TAG = "MainActivity";
     private static final int PERMISSION_REQUEST_FINE_LOCATION = 1;

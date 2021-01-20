@@ -9,19 +9,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link Home#newInstance} factory method to
- * create an instance of this fragment.
- */
+// Home Fragment (PreferenceFragment) which is embedded in MainActivity shows detected beacon
+// on fragment swiperefreshlayout is places
 public class Home extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
@@ -29,15 +24,7 @@ public class Home extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment Home.
-     */
-    // TODO: Rename and change types and number of parameters
+
     public static Home newInstance(String param1, String param2) {
         Home fragment = new Home();
         Bundle args = new Bundle();
@@ -63,6 +50,7 @@ public class Home extends Fragment {
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
+    // this method is called after the fragment is created (user navigates to fragment)
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         // event listener of swipe refresh layout (home fragment) starts beacon scanning
@@ -71,6 +59,7 @@ public class Home extends Fragment {
             @Override
             public void onRefresh() {
                 ((MainActivity)getActivity()).scanClicked(((MainActivity)getActivity()).findViewById(R.id.fragment_home));
+                // when beacon is detected refreshing animation will be stopped
                 //pullToRefresh.setRefreshing(false);
             }
         });

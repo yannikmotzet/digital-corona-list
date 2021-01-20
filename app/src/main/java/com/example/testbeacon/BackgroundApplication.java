@@ -17,6 +17,9 @@ import org.altbeacon.beacon.Region;
 import org.altbeacon.beacon.startup.BootstrapNotifier;
 import org.altbeacon.beacon.startup.RegionBootstrap;
 
+// the application class needs to implement BootstrapNotifier
+// this is responsible for an automatically background scan if the app is closed
+// in the callback-methods of this interface, its possible to handle the scan-response
 public class BackgroundApplication extends Application implements BootstrapNotifier {
     private static  final String TAG = "BackgroundApplication";
     private RegionBootstrap regionBootstrap;
@@ -26,11 +29,13 @@ public class BackgroundApplication extends Application implements BootstrapNotif
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "App started up");
-        // TODO comment method
+        // here you create an instance of the beacon manager, which is responsible for starting/stopping scanning
         BeaconManager beaconManager = BeaconManager.getInstanceForApplication(this);
+        // here you define that the beacon advertise with the eddystone protocoll
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(BeaconParser.EDDYSTONE_UID_LAYOUT));
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(BeaconParser.EDDYSTONE_TLM_LAYOUT));
         beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(BeaconParser.EDDYSTONE_URL_LAYOUT));
+        // here you create a new region in which the beacons are advertising
         Region region = new Region("com.example.myapp.boostrapRegion", null, null, null);
         regionBootstrap = new RegionBootstrap(this, region);
 
@@ -38,10 +43,11 @@ public class BackgroundApplication extends Application implements BootstrapNotif
         createNotificationChannel();
     }
 
-    // TODO comment method
+    // this method is executed when a beacon comes into the defined region
     @Override
     public void didEnterRegion(Region region) {
         Log.d(TAG, "Got a didEnterRegion callnnn");
+        // with the following line it's necessary to open the app before you get new notifications for the same beacon
         regionBootstrap.disable();
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -67,12 +73,12 @@ public class BackgroundApplication extends Application implements BootstrapNotif
 
     @Override
     public void didExitRegion(Region region) {
-//Don't care
+        //Don't care
     }
 
     @Override
     public void didDetermineStateForRegion(int i, Region region) {
-//Don't care
+        //Don't care
     }
 
     // create channel for notification (a channel is a definition about the notification's behaviour)

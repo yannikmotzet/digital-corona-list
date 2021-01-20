@@ -104,8 +104,9 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         editor.putString("0x00112233445566778899", "htwg-f124");
         editor.apply();
 
-        // TODO comment method
+        // checks if bluetooth on the device is enabled
         verifyBluetooth();
+        // checks whether all permissions are granted
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
             ActivityCompat.requestPermissions(MainActivity.this, new String[] { Manifest.permission.ACCESS_FINE_LOCATION }, PERMISSION_REQUEST_FINE_LOCATION);
         }
@@ -121,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
     // this method is called when the app is resumed from background
     public void onResume(){
         super.onResume();
-        // TODO comment method
+        // when the app gets opend, the beacon manager must be instantiated for ranging
         mBeaconManager = BeaconManager.getInstanceForApplication(this.getApplicationContext());
         // Detect the main Eddystone-UID frame:
         mBeaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(BeaconParser.EDDYSTONE_UID_LAYOUT));
@@ -133,12 +134,12 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
     @Override
     public void onPause() {
         super.onPause();
-        // TODO comment method
+        // when the app is closed, the beacon manager gets unbind, because ranging is not possible when the app is closed
         mBeaconManager.unbind(this);
     }
 
 
-    // TODO comment method
+    // this override method is required for setting the permissions
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
@@ -163,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         }
     }
 
-    // TODO comment method
+    // this method checks whether bluetooth is enabled or not
     private void verifyBluetooth() {
         try {
             if (!BeaconManager.getInstanceForApplication(this).checkAvailability()) {
@@ -197,7 +198,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         }
     }
 
-    // TODO comment method
+    // dont care (test purposes)
     @Override
     public void onBeaconServiceConnect() {
         /*
@@ -212,7 +213,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
          */
     }
 
-    // TODO comment method
+    // this method is executed when a beacon enters the ranging region
     @Override
     public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
         for (Beacon beacon: beacons) {
@@ -224,6 +225,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
                         " and instance id: "+instanceId+
                         " approximately "+beacon.getDistance()+" meters away.");
 
+                // if it's a new beacon in one scan period, some ui elements are created and added to the home screen
                 if(!idList.contains(namespaceId.toString())) {
                     TextView idText = new TextView(this);
                     TextView distanceText = new TextView(this);
@@ -244,6 +246,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
                     distanceText.setLayoutParams(params);
                     idText.setLayoutParams(params);
                     Button postButton = new Button(this);
+                    // send button for one beacon, to send the unser information to the rest server
                     View.OnClickListener listener = new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -269,20 +272,23 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         }
     }
 
-    // TODO comment method
+    // this method is executed when the scan button is clicked
     public void scanClicked (View v){
+        // for a new ranging-scan, the home ui results get cleared
         idList.clear();
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
-
         linearLayout.removeAllViews();
+        // define the new ranging region
         region = new Region("all-beacons-region", null, null, null);
         try {
+            // start scanning
             mBeaconManager.startRangingBeaconsInRegion(region);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
         mBeaconManager.addRangeNotifier(this);
         //mBeaconManager.bind(this);
+        // automatically stop ranging after 10 sec
         final Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(new Runnable() {
             @Override
@@ -300,9 +306,10 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
 
     }
 
-    // TODO comment method
+    // this method is executed when the stop-raning button is clicked
     public void stopScan (View v){
         try{
+            // stop ranging
             mBeaconManager.stopRangingBeaconsInRegion(region);
         }
         catch (RemoteException e){
@@ -310,7 +317,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         }
     }
 
-    // TODO comment method
+    // this method is used to round the distance value of the beacon
     public static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
         long factor = (long) Math.pow(10, places);
